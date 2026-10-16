@@ -236,12 +236,15 @@ export default function caveman(pi: ExtensionAPI) {
 
 	function syncStatus(ctx: Pick<ExtensionContext, "ui">) {
 		stopAnimation();
-		const theme = ctx.ui.theme;
 
 		if (level === "off" || !config.showStatus) {
 			ctx.ui.setStatus("caveman", "");
 			return;
 		}
+
+		// Hosts like pi-web-ui expose setStatus without a TUI theme — bail instead of throwing on theme.fg.
+		if (!ctx.ui.theme?.fg) return;
+		const theme = ctx.ui.theme;
 
 		const anim = ANIMATIONS[level];
 		const setFrame = (frame: string) => {
