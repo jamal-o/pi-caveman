@@ -10,6 +10,13 @@
 import { pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+
+// Set before importing: the extension resolves CONFIG_PATH at module load.
+const configDir = mkdtempSync(join(tmpdir(), "pi-caveman-status-test-"));
+process.env.PI_CODING_AGENT_DIR = configDir;
+process.on("exit", () => rmSync(configDir, { recursive: true, force: true }));
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const handlers = new Map();
